@@ -1,0 +1,15 @@
+body { background: #f4f6f9; }
+
+.video-stream {
+  width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+#cantidad { transition: color .3s; }
+.tarjeta-exceso { border: 2px solid var(--bs-danger); }
+.tarjeta-exceso #cantidad { color: var(--bs-danger); }
+
+.tabla-scroll { max-height: 360px; overflow-y: auto; }

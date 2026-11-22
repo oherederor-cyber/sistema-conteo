@@ -1,0 +1,71 @@
+{% extends "conteo/base.html" %}
+{% load static %}
+{% block titulo %}Historial · {{ camara.nombre }}{% endblock %}
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <h4 class="mb-0"><i class="bi bi-graph-up"></i> Historial · {{ camara.nombre }}</h4>
+  <div class="btn-group" role="group" id="filtro-horas">
+    <button class="btn btn-outline-primary active" data-horas="1">1 h</button>
+    <button class="btn btn-outline-primary" data-horas="8">8 h</button>
+    <button class="btn btn-outline-primary" data-horas="24">24 h</button>
+    <button class="btn btn-outline-primary" data-horas="168">7 días</button>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body">
+    <div class="text-body-secondary small">Máximo</div><div id="r-maximo" class="fs-2 fw-bold">0</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body">
+    <div class="text-body-secondary small">Promedio</div><div id="r-promedio" class="fs-2 fw-bold">0</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body">
+    <div class="text-body-secondary small">Registros</div><div id="r-registros" class="fs-2 fw-bold">0</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center"><div class="card-body">
+    <div class="text-body-secondary small">Alertas</div><div id="r-alertas" class="fs-2 fw-bold text-danger">0</div></div></div></div>
+</div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body"><canvas id="grafica-historial" height="90"></canvas></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-header">Últimos registros</div>
+      <div class="table-responsive tabla-scroll">
+        <table class="table table-sm table-striped mb-0">
+          <thead><tr><th>Fecha y hora</th><th class="text-end">Personas</th></tr></thead>
+          <tbody>
+          {% for r in registros %}
+            <tr><td>{{ r.fecha_hora|date:"d/m/Y H:i:s" }}</td><td class="text-end">{{ r.cantidad }}</td></tr>
+          {% empty %}
+            <tr><td colspan="2" class="text-center text-body-secondary">Sin registros todavía.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header">Alertas de aforo</div>
+      <ul class="list-group list-group-flush">
+        {% for a in alertas %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ a.fecha_hora|date:"d/m/Y H:i" }}</span>
+            <span class="badge text-bg-danger">{{ a.cantidad }}/{{ a.aforo_maximo }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-body-secondary">Sin alertas.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  window.CONTEO_CONFIG = { apiUrl: "{% url 'conteo:api_historial' camara.pk %}" };
+</script>
+<script src="{% static 'conteo/js/historial.js' %}"></script>
+{% endblock %}

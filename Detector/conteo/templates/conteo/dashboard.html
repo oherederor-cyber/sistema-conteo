@@ -1,0 +1,68 @@
+{% extends "conteo/base.html" %}
+{% load static %}
+{% block titulo %}En vivo · {{ camara.nombre }}{% endblock %}
+{% block contenido %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-camera-video-fill text-danger"></i> {{ camara }}</span>
+        <span id="estado-camara" class="badge text-bg-secondary">Conectando…</span>
+      </div>
+      <div class="card-body p-0 bg-black text-center">
+        <img id="video" class="video-stream" src="{% url 'conteo:video_feed' camara.pk %}" alt="Video en tiempo real">
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div id="tarjeta-conteo" class="card shadow-sm text-center mb-3">
+      <div class="card-body">
+        <div class="text-body-secondary">Personas en el laboratorio</div>
+        <div id="cantidad" class="display-1 fw-bold">0</div>
+        <div class="progress" role="progressbar" style="height: 10px">
+          <div id="barra-aforo" class="progress-bar bg-success" style="width: 0%"></div>
+        </div>
+        <small class="text-body-secondary">Aforo máximo: <span id="aforo">{{ camara.aforo_maximo }}</span></small>
+        <div id="aviso-exceso" class="alert alert-danger mt-3 mb-0 d-none">
+          <i class="bi bi-exclamation-triangle-fill"></i> ¡Aforo excedido!
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+      <div class="card-header"><i class="bi bi-clock-history"></i> Actividad reciente</div>
+      <div class="card-body">
+        <div class="row text-center mb-2">
+          <div class="col">
+            <div class="small text-body-secondary">Máximo</div>
+            <div class="fs-4 fw-semibold" id="sesion-max">—</div>
+          </div>
+          <div class="col">
+            <div class="small text-body-secondary">Promedio</div>
+            <div class="fs-4 fw-semibold" id="sesion-prom">—</div>
+          </div>
+        </div>
+        <ul class="list-group list-group-flush small" id="lista-actividad">
+          <li class="list-group-item text-body-secondary px-0">Esperando datos…</li>
+        </ul>
+        <div class="small text-body-secondary mt-2">Desde que abriste esta página.</div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body small">
+        <div class="d-flex justify-content-between"><span>Detector</span><strong id="detector">—</strong></div>
+        <div class="d-flex justify-content-between"><span>FPS</span><strong id="fps">—</strong></div>
+        <div class="d-flex justify-content-between"><span>Última actualización</span><strong id="hora">—</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  window.CONTEO_CONFIG = { apiUrl: "{% url 'conteo:api_conteo' camara.pk %}" };
+</script>
+<script src="{% static 'conteo/js/dashboard.js' %}?v=2"></script>
+{% endblock %}
